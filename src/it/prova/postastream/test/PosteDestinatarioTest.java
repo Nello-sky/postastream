@@ -117,12 +117,29 @@ public class PosteDestinatarioTest {
 		List<Destinatario> listDestinatariConContoInPosteConCheckDipendenti = postaDestinatariList.stream()
 				.filter(postaItem -> (postaItem.getNumeroDipendenti() >= numeroDipendentiMin
 						&& postaItem.getNumeroDipendenti() <= numeroDipendentiMax))
-				.flatMap(x -> x.getDestinatari().stream().filter(destToken -> destToken.getPossessoreDiContoCorrente() == true ))
+				.flatMap(x -> x.getDestinatari().stream()
+						.filter(destToken -> destToken.getPossessoreDiContoCorrente() == true))
 				.peek(aaa -> System.out.println("giusto per capire cosa passa..." + aaa)).collect(Collectors.toList());
 
 		listDestinatariConContoInPosteConCheckDipendenti.forEach(destItem -> System.out.println(
 				destItem.getId() + " " + destItem.getNome() + " " + destItem.getCognome() + " " + destItem.getEta()
 						+ " " + destItem.getIndirizzo() + " " + destItem.getPossessoreDiContoCorrente()));
+
+		System.out.println("");
+///la lista delle età dei destinatari delle poste che contengano nel campo denominazione la stringa ‘Centrale’ 
+// siano state aperta almeno dal primo gennaio 2000///////////////////////////////////////////////////////////////////
+		LocalDate openDate = LocalDate.of(2000, 01, 1); // se un giorno in meno per almeno correggo di un giorno indietro
+		String subStringDenominazionePoste = "Centrale";
+		System.out.println("- - - last");
+
+		List<Integer> listaEtaDestinatariSpecial = postaDestinatariList.stream()
+				.filter(postaItem -> postaItem.getDataApertura().isAfter(openDate)
+						&& postaItem.getDenominazione().contains(subStringDenominazionePoste))
+				.flatMap(x -> x.getDestinatari().stream()).map(destItem -> destItem.getEta())
+				.peek(aaa -> System.out.println("giusto per capire cosa passa..." + aaa)).collect(Collectors.toList());
+
+		listaEtaDestinatariSpecial.forEach(l -> System.out.println(l));
+
 	}
 
 }
